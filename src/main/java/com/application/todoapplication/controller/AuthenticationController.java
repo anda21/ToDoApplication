@@ -21,7 +21,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
 
@@ -90,7 +89,7 @@ public class AuthenticationController {
     @ApiOperation("Register new user")
     @PostMapping(value = "register")
     public ResponseEntity<UserGetDto> save(
-            @RequestBody @Valid UserPostDto userRegister,
+            @RequestBody UserPostDto userRegister,
             final BindingResult bindingResult) {
         return ResponseEntity.ok(userService.register(userRegister));
     }
