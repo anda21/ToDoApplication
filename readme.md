@@ -8,3 +8,11 @@
 8)Logout
 9)Need to generate jar or war.
 Just basic and decent application using latest versions.
+
+
+
+To run the application change the db credential in the application.properties/application-prod.properties file
+and execute the command
+
+mvn package
+java -jar -Dspring.profiles.active=application-prod todoapplication-0.0.1-SNAPSHOT.jar
