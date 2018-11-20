@@ -1,5 +1,6 @@
 package com.application.todoapplication.controller;
 
+import com.application.todoapplication.dto.TokenWithUser;
 import com.application.todoapplication.dto.UserGetDto;
 import com.application.todoapplication.dto.UserPostDto;
 import com.application.todoapplication.entities.User;
@@ -40,7 +41,7 @@ public class AuthenticationController {
     UserService userService;
     @ApiOperation("Create a new JWT token")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity<?> createAuthenticationToken(
+    public TokenWithUser createAuthenticationToken(
             @RequestBody JwtAuthenticationRequest authenticationRequest,
             HttpServletResponse response
     ) throws AuthenticationException, IOException {
@@ -61,7 +62,7 @@ public class AuthenticationController {
         String jws = tokenHelper.generateToken(user.getUsername(),user.getId());
         int expiresIn = tokenHelper.getExpiredIn();
         // Return the token
-        return ResponseEntity.ok(new UserTokenState(jws, expiresIn));
+        return new TokenWithUser(userService.fromUser(user),new UserTokenState(jws, expiresIn));
     }
     @ApiOperation("Refresh JWT token")
     @RequestMapping(value = "/refresh", method = RequestMethod.POST)
@@ -88,9 +89,25 @@ public class AuthenticationController {
     }
     @ApiOperation("Register new user")
     @PostMapping(value = "register")
-    public ResponseEntity<UserGetDto> save(
+    public TokenWithUser save(
             @RequestBody UserPostDto userRegister,
             final BindingResult bindingResult) {
-        return ResponseEntity.ok(userService.register(userRegister));
+        UserGetDto userGetDto = userService.register(userRegister);
+        final Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        userRegister.getUsername(),
+                        userRegister.getPassword()
+                )
+        );
+
+        // Inject into security context
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        // token creation
+        User user = (User)authentication.getPrincipal();
+        String jws = tokenHelper.generateToken(user.getUsername(),user.getId());
+        int expiresIn = tokenHelper.getExpiredIn();
+        // Return the token
+        return new TokenWithUser(userService.fromUser(user),new UserTokenState(jws, expiresIn));
     }
 }

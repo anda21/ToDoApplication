@@ -20,4 +20,6 @@ public interface UserService {
 
     UserGetDto register(UserPostDto userRegister);
 
+    UserGetDto fromUser(User user);
+
 }

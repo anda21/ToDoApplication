@@ -69,7 +69,9 @@ public class UserServiceImpl implements UserService {
         user.setPhoneNumber(userPostDto.getPhoneNumber());
         return user;
     }
-    private UserGetDto fromUser(User user){
+
+    @Override
+    public UserGetDto fromUser(User user){
         UserGetDto userGetDto = new UserGetDto();
         userGetDto.setId(user.getId());
         userGetDto.setEmail(user.getPassword());
