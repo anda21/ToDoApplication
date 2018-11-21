@@ -53,7 +53,7 @@ public  class MvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry corsRegistry) {
-        corsRegistry.addMapping("/**").allowedMethods("GET", "POST", "PATCH", "DELETE");
+        corsRegistry.addMapping("/**").allowedMethods("GET", "POST", "PATCH", "DELETE","PUT","OPTIONS");
     }
 
     @Override
